@@ -1,0 +1,194 @@
+<!--
+FILE          : php-zoo.html
+PROJECT       : WDD A02 - Animal Serve in PHP
+PROGRAMMER    : Bilal Syed
+FIRST VERSION : 2024-10-10
+DESCRIPTION   : This HTML file contains the code for the first page of the animal serve website.
+                This first page uses a form to get info from the user on what their name is and
+                what animal they would like to view. It uses a textbox and a button to get and 
+                save the user's name. It uses a select-list and a button to get the user's animal
+                choice. The user's inputs in the HTML form are validated by a javascript function. 
+                Once the inputs are confirmed valid, it goes to the PHP page using the form POST
+                method. This file also contains both inline and internal CSS to format the page and
+                add some flashy design to it.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Animal-Serve</title>
+
+    <style>
+        /*class used to center the form element*/
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /*class used to center the button elements*/
+        .center-button{
+            display: block;
+            margin: auto;
+        }
+
+        /*keyframe animation used to create a blinking affect*/
+        @keyframes blink {
+            0% {
+                opacity: 1; /*at the start of the keyframe, the text is visible*/
+            }
+
+            50% {
+                opacity: 0; /*halfway through the keyframe the text isn't visible*/
+            }
+            
+            100% {
+                opacity: 0; /*at the end of the keyfram the text isn't visible*/
+            }
+        }
+
+        /*class used to apply the blinking keyframe animation to some text*/
+        .blinking-text {
+            text-align: center;
+            color: red;
+            animation: blink 0.25s ease-in-out 5; /*the duration of the animation is 0.25 seconds, the animation runs 5 times and then stops*/ 
+        }
+    </style>
+
+    <script type="text/javascript">
+
+        var currentStep = "name";   //save the current step of the form that the user is on as a global variable
+        var playerName = "";        //save the player's name as a global variable
+
+        /*
+         * FUNCTION    : validateInputs()
+         * DESCRIPTION : This function validates the user inputs in the HTML form for both their name and their
+         *               animal choice. If an input is ever invalid it displays the error message to the user
+         *               and returns false. If the user has just entered the website or has reloaded the first 
+         *               page the function starts at the "name" step of the form. Once the name input is valid
+         *               the step switches to "animal" and the function returns. Then when the user submits their
+         *               animal choice on the form, it goes back into the function and validates the animal input.
+         *               Once the animal input is validated it submits the form.
+         * PARAMETERS  : void
+         * RETURNS     : bool - True if the input is valid and false if the input is 
+         *                      invalid.
+        */
+        function validateInputs(){
+
+            var notValid = false;                                                  //bool to indicate that the input is invalid
+            var valid = true;                                                      //bool to indicate that the input is valid
+            var whiteSpaceCheck = /^\s*?$/;                                        //regex to determine if a string contains only whitespace
+            var animalInputLabel = document.getElementById("getAnimalLabel");      //save the label element for the animal input in a variable
+            var error1 = document.getElementById("errorMessage1");                 //save the div for the first error message in a variable
+            var error2 = document.getElementById("errorMessage2");                 //save the div for the second error message in a variable
+            var header = document.getElementById("animalFormPageHeading");         //save the header element for the page in a variable
+ 
+            document.getElementById("errorMessage2").classList = "";               //set the class attribute of the second error message to empty
+            document.getElementById("errorMessage1").classList = "";               //set the class attribute of the first error message to empty
+            
+            //if the user is currently on the part of the form which gets their name
+            if (currentStep === "name"){
+                playerName = document.getElementById("userName").value;                      //save the user's input for their name in the playerName global variable
+
+                //if the user inputs nothing for their name
+                if (!playerName){
+                    document.getElementById("errorMessage1").classList = "blinking-text";    //apply the blinking animation CSS class to the div for the first error message
+                    error1.innerHTML = "<strong>Error: field cannot be empty.</strong>";     //display the first error message to the user
+                    return notValid;                                                         //return false
+                }
+
+                //else-if the user's input for their name contains only whitespaces
+                else if (playerName.match(whiteSpaceCheck)){
+                    document.getElementById("errorMessage1").classList = "blinking-text";    //apply the blinking animation CSS class to the div for the first error message
+                    error1.innerHTML = "<strong>Error: field cannot be empty.</strong>";     //display the first error message to the user
+                    return notValid;                                                         //return false
+                }
+
+                //the input for the name is valid
+                else{
+                    header.innerHTML = "<strong>Time to choose an animal!<strong>";                                    //change page header to indicate that the user is now choosing
+                                                                                                                       //an animal
+                    document.getElementById("getName").style.display = "none";                                         //hide the div which contained the portion of the form that
+                                                                                                                       //got the user's input for their name
+                    document.getElementById("getAnimal").style.display = "block";                                      //show the div which gets user input for the animal choice
+                    animalInputLabel.innerHTML = "<strong>Hi " + playerName + ", please select an animal:</strong>";   //ask the user by name to choose an animal
+                    currentStep = "animal";                                                                            //change current step of the form to the animal portion
+                    return valid;                                                                                      //return true
+                }
+            }
+
+            //if the user is currently on the part of the form which gets their animal choice
+            else if (currentStep === "animal"){
+                var animalName = document.getElementById("animal").value;                         //save the user's input for their animal choice in a variable 
+                
+                //if the user didn't select an actual animal from the select-list and just left it one the "EMPTY" selection
+                if (animalName === "empty"){
+                    document.getElementById("errorMessage2").classList = "blinking-text";         //apply the blinking animation CSS class to the div for the second error message   
+                    error2.innerHTML = "<strong>Error: an animal must be selected.</strong>";     //display the second error message to the user
+                    return notValid;                                                              //return false
+                }
+
+                //the input for the animal choice is valid
+                else{
+                    error2.innerHTML = "";          //clear out the error message
+                    document.animalForm.submit();   //submit the form to continue to the next page
+                }
+            }
+
+        }
+
+    </script>
+
+</head>
+
+<body style="background-image: url('/theZoo/background1.jpg');background-repeat: no-repeat;background-size: 100% 100%;min-height: 100vh;">
+
+    <div>
+
+        <h1 id="animalFormPageHeading" style="text-align: center;font-size: 65px;"><strong>Welcome to my zoo!</strong></h1>
+
+        <form name="animalForm" action="animals.php" method="POST" class="center">
+            <div id="getName">
+                <table border="0">
+                    <tr>
+                        <label><strong>Enter your name:</strong></label>
+                        <input type="text" id="userName" name="fname">
+                    </tr><br><br>
+                    <tr>
+                        <input type="button" id="goNext" value="Next" onclick="return validateInputs()" class="center-button">
+                        <div id="errorMessage1" style="color: red;"></div>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="getAnimal">
+                <script>document.getElementById("getAnimal").style.display="none";</script>
+                <table border="0">
+                    <tr>
+                        <label id="getAnimalLabel"></label>
+                        <select id="animal" name="fanimal">
+                            <option value="empty">EMPTY</option>
+                            <option value="giraffe">Giraffe</option>
+                            <option value="lion">Lion</option>
+                            <option value="elephant">Elephant</option>
+                            <option value="gazelle">Gazelle</option>
+                            <option value="meerkat">Meerkat</option>
+                            <option value="mandrill">Mandrill</option>
+                        </select>
+                    </tr><br><br>
+                    <tr>
+                        <input type="button" id="goNext" value="Next" onclick="return validateInputs()" class="center-button">
+                        <div id="errorMessage2" style="color: red;"></div>
+                    </tr>
+                </table>
+            </div>
+        </form>
+
+    </div>
+    
+
+</body>
+
+</html>
